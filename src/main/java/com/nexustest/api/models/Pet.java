@@ -18,7 +18,7 @@ public class Pet {
     private String name;
     private List<String> photoUrls;
     private List<Tag> tags;
-    private String status; // available, pending, sold
+    private String status;
 
     @Data
     @Builder

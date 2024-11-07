@@ -12,7 +12,7 @@ public class BaseRequest {
         return RestAssured.given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .log().all();  // Request detaylarını logla
+                .log().all();
     }
 
     protected RequestSpecification setup(String token) {

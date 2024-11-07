@@ -3,16 +3,17 @@
 <suite name="Pet Store API Test Suite">
     <test name="Pet API Tests" preserve-order="true">
         <classes>
-            <class name="com.nexustest.api.tests.PetTest">
-                <methods>
-                    <include name="TC01_testCreateAndGetPet"/>
-                    <include name="TC02_testUpdatePet"/>
-                    <include name="TC03_testFindPetsByStatus"/>
-                    <include name="TC04_testDeletePet"/>
-                    <include name="TC05_testGetNonExistentPet"/>
-                    <include name="TC06_testCreatePetWithInvalidStatus"/>
-                </methods>
-            </class>
+            <class name="com.nexustest.api.tests.PetTest"/>
+        </classes>
+    </test>
+    <test name="Store API Tests" preserve-order="true">
+        <classes>
+            <class name="com.nexustest.api.tests.StoreTest"/>
+        </classes>
+    </test>
+    <test name="User API Tests" preserve-order="true">
+        <classes>
+            <class name="com.nexustest.api.tests.UserTest"/>
         </classes>
     </test>
 </suite>

@@ -14,7 +14,7 @@ public class PetTest {
     private PetService petService;
     private Long savedPetId;
 
-    @BeforeClass(alwaysRun = true)  // alwaysRun ekledik
+    @BeforeClass(alwaysRun = true)
     public void setup() {
         System.out.println("Initializing PetService...");
         petService = new PetService();
@@ -58,19 +58,15 @@ public class PetTest {
         assertNotNull(petService, "PetService should not be null");
         assertNotNull(savedPetId, "SavedPetId should not be null");
 
-        // Get existing pet
         Response getResponse = petService.getPetById(savedPetId);
         Pet existingPet = getResponse.as(Pet.class);
 
-        // Update pet details
         existingPet.setName("Buddy Updated");
         existingPet.setStatus("sold");
 
-        // Update pet
         Response updateResponse = petService.updatePet(existingPet);
         assertEquals(updateResponse.getStatusCode(), 200, "Pet update failed");
 
-        // Verify updates
         Response verifyResponse = petService.getPetById(savedPetId);
         Pet updatedPet = verifyResponse.as(Pet.class);
         assertEquals(updatedPet.getName(), "Buddy Updated", "Pet name update failed");
@@ -89,7 +85,6 @@ public class PetTest {
         List<Pet> pets = response.jsonPath().getList("", Pet.class);
         assertNotNull(pets, "Pet list should not be null");
 
-        // Verify all returned pets have the correct status
         for (Pet pet : pets) {
             assertEquals(pet.getStatus(), status,
                     String.format("Pet with ID %d has incorrect status %s", pet.getId(), pet.getStatus()));
@@ -106,7 +101,6 @@ public class PetTest {
         Response deleteResponse = petService.deletePet(savedPetId);
         assertEquals(deleteResponse.getStatusCode(), 200, "Failed to delete pet");
 
-        // Verify pet is deleted
         Response getResponse = petService.getPetById(savedPetId);
         assertEquals(getResponse.getStatusCode(), 404, "Pet should not exist after deletion");
     }
@@ -126,7 +120,6 @@ public class PetTest {
         assertNotNull(petService, "PetService should not be null");
     }
 
-    // Helper method to create test pet
     private Pet createTestPet(String name, String status) {
         Pet.Category category = Pet.Category.builder()
                 .id(1L)
