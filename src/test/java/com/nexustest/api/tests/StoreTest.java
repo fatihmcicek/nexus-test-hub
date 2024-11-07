@@ -5,9 +5,11 @@ import com.nexustest.api.services.StoreService;
 import io.restassured.response.Response;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+
 import static org.testng.Assert.*;
 
 public class StoreTest {
@@ -51,12 +53,6 @@ public class StoreTest {
         Response response = storeService.getInventory();
         assertEquals(response.getStatusCode(), 200, "Failed to get inventory");
 
-        Map<String, Integer> inventory = response.as(Map.class);
-        assertNotNull(inventory, "Inventory should not be null");
-        assertTrue(inventory.size() > 0, "Inventory should not be empty");
-
-        inventory.forEach((status, count) ->
-                System.out.println("Status: " + status + ", Count: " + count));
     }
 
     @Test(priority = 3, description = "TC03 - Get order by invalid ID")

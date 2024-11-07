@@ -2,12 +2,15 @@ package com.nexustest.api.tests;
 
 import com.nexustest.api.models.Pet;
 import com.nexustest.api.services.PetService;
+import com.nexustest.utils.TestDataReader;
 import io.restassured.response.Response;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.testng.annotations.DataProvider;
+
 import java.util.Collections;
 import java.util.List;
+
 import static org.testng.Assert.*;
 
 public class PetTest {
@@ -22,7 +25,7 @@ public class PetTest {
 
     @DataProvider(name = "petStatuses")
     public Object[][] getPetStatuses() {
-        return new Object[][] {
+        return new Object[][]{
                 {"available"},
                 {"pending"},
                 {"sold"}
@@ -34,7 +37,7 @@ public class PetTest {
         System.out.println("Running TC01...");
         assertNotNull(petService, "PetService should not be null");
 
-        Pet pet = createTestPet("Buddy", "available");
+        Pet pet = TestDataReader.getTestData("pet-data.json", "validPet", Pet.class);
 
         Response createResponse = petService.createPet(pet);
         assertEquals(createResponse.getStatusCode(), 200, "Pet creation failed");
@@ -61,16 +64,17 @@ public class PetTest {
         Response getResponse = petService.getPetById(savedPetId);
         Pet existingPet = getResponse.as(Pet.class);
 
-        existingPet.setName("Buddy Updated");
-        existingPet.setStatus("sold");
+        Pet updateData = TestDataReader.getTestData("pet-data.json", "updatePet", Pet.class);
+        existingPet.setName(updateData.getName());
+        existingPet.setStatus(updateData.getStatus());
 
         Response updateResponse = petService.updatePet(existingPet);
         assertEquals(updateResponse.getStatusCode(), 200, "Pet update failed");
 
         Response verifyResponse = petService.getPetById(savedPetId);
         Pet updatedPet = verifyResponse.as(Pet.class);
-        assertEquals(updatedPet.getName(), "Buddy Updated", "Pet name update failed");
-        assertEquals(updatedPet.getStatus(), "sold", "Pet status update failed");
+        assertEquals(updatedPet.getName(), updateData.getName(), "Pet name update failed");
+        assertEquals(updatedPet.getStatus(), updateData.getStatus(), "Pet status update failed");
     }
 
     @Test(priority = 3, description = "TC03 - Find pets by status",
