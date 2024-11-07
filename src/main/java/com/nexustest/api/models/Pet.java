@@ -2,13 +2,13 @@ package com.nexustest.api.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import java.util.List;
 
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -21,7 +21,7 @@ public class Pet {
     private String status;
 
     @Data
-    @Builder
+    @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Category {
@@ -30,7 +30,7 @@ public class Pet {
     }
 
     @Data
-    @Builder
+    @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Tag {

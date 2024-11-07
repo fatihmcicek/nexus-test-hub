@@ -2,17 +2,16 @@ package com.nexustest.api.tests;
 
 import com.nexustest.api.models.Pet;
 import com.nexustest.api.services.PetService;
+import com.nexustest.utils.ExtentReportManager;
 import com.nexustest.utils.TestDataReader;
 import io.restassured.response.Response;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-import org.testng.annotations.DataProvider;
+import org.testng.annotations.*;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.testng.Assert.*;
 
+@Listeners(com.nexustest.utils.TestListener.class)
 public class PetTest {
     private PetService petService;
     private Long savedPetId;
@@ -25,6 +24,7 @@ public class PetTest {
 
     @DataProvider(name = "petStatuses")
     public Object[][] getPetStatuses() {
+        ExtentReportManager.getTest().info("Setting up data provider for pet statuses");
         return new Object[][]{
                 {"available"},
                 {"pending"},
@@ -34,22 +34,28 @@ public class PetTest {
 
     @Test(priority = 1, description = "TC01 - Create a new pet and verify its details")
     public void TC01_testCreateAndGetPet() {
-        System.out.println("Running TC01...");
+        ExtentReportManager.getTest().info("Starting test: Create new pet");
         assertNotNull(petService, "PetService should not be null");
 
+        ExtentReportManager.getTest().info("Loading test data from JSON file");
         Pet pet = TestDataReader.getTestData("pet-data.json", "validPet", Pet.class);
 
+        ExtentReportManager.getTest().info("Creating new pet with name: " + pet.getName());
         Response createResponse = petService.createPet(pet);
+        ExtentReportManager.getTest().info("Create pet API response code: " + createResponse.getStatusCode());
         assertEquals(createResponse.getStatusCode(), 200, "Pet creation failed");
 
         Pet createdPet = createResponse.as(Pet.class);
         savedPetId = createdPet.getId();
-        assertNotNull(savedPetId, "Pet ID should not be null");
+        ExtentReportManager.getTest().info("Created pet with ID: " + savedPetId);
 
+        ExtentReportManager.getTest().info("Verifying created pet details");
         Response getResponse = petService.getPetById(savedPetId);
+        ExtentReportManager.getTest().info("Get pet API response code: " + getResponse.getStatusCode());
         assertEquals(getResponse.getStatusCode(), 200, "Failed to get pet by ID");
 
         Pet retrievedPet = getResponse.as(Pet.class);
+        ExtentReportManager.getTest().info("Verifying pet name and status");
         assertEquals(retrievedPet.getName(), pet.getName(), "Pet name does not match");
         assertEquals(retrievedPet.getStatus(), pet.getStatus(), "Pet status does not match");
     }
@@ -57,20 +63,25 @@ public class PetTest {
     @Test(priority = 2, description = "TC02 - Update existing pet's information",
             dependsOnMethods = "TC01_testCreateAndGetPet")
     public void TC02_testUpdatePet() {
-        System.out.println("Running TC02...");
+        ExtentReportManager.getTest().info("Starting test: Update existing pet");
         assertNotNull(petService, "PetService should not be null");
         assertNotNull(savedPetId, "SavedPetId should not be null");
 
+        ExtentReportManager.getTest().info("Getting existing pet with ID: " + savedPetId);
         Response getResponse = petService.getPetById(savedPetId);
         Pet existingPet = getResponse.as(Pet.class);
 
+        ExtentReportManager.getTest().info("Loading update data from JSON");
         Pet updateData = TestDataReader.getTestData("pet-data.json", "updatePet", Pet.class);
         existingPet.setName(updateData.getName());
         existingPet.setStatus(updateData.getStatus());
 
+        ExtentReportManager.getTest().info("Updating pet with new name: " + updateData.getName() + " and status: " + updateData.getStatus());
         Response updateResponse = petService.updatePet(existingPet);
+        ExtentReportManager.getTest().info("Update pet API response code: " + updateResponse.getStatusCode());
         assertEquals(updateResponse.getStatusCode(), 200, "Pet update failed");
 
+        ExtentReportManager.getTest().info("Verifying updated pet details");
         Response verifyResponse = petService.getPetById(savedPetId);
         Pet updatedPet = verifyResponse.as(Pet.class);
         assertEquals(updatedPet.getName(), updateData.getName(), "Pet name update failed");
@@ -80,15 +91,19 @@ public class PetTest {
     @Test(priority = 3, description = "TC03 - Find pets by status",
             dataProvider = "petStatuses")
     public void TC03_testFindPetsByStatus(String status) {
-        System.out.println("Running TC03 with status: " + status);
+        ExtentReportManager.getTest().info("Starting test: Find pets by status: " + status);
         assertNotNull(petService, "PetService should not be null");
 
+        ExtentReportManager.getTest().info("Searching for pets with status: " + status);
         Response response = petService.getPetsByStatus(status);
+        ExtentReportManager.getTest().info("Find pets API response code: " + response.getStatusCode());
         assertEquals(response.getStatusCode(), 200, "Failed to get pets by status");
 
         List<Pet> pets = response.jsonPath().getList("", Pet.class);
+        ExtentReportManager.getTest().info("Found " + pets.size() + " pets with status: " + status);
         assertNotNull(pets, "Pet list should not be null");
 
+        ExtentReportManager.getTest().info("Verifying status of each pet in the response");
         for (Pet pet : pets) {
             assertEquals(pet.getStatus(), status,
                     String.format("Pet with ID %d has incorrect status %s", pet.getId(), pet.getStatus()));
@@ -98,49 +113,43 @@ public class PetTest {
     @Test(priority = 4, description = "TC04 - Delete a pet",
             dependsOnMethods = {"TC01_testCreateAndGetPet", "TC02_testUpdatePet"})
     public void TC04_testDeletePet() {
-        System.out.println("Running TC04...");
+        ExtentReportManager.getTest().info("Starting test: Delete pet");
         assertNotNull(petService, "PetService should not be null");
         assertNotNull(savedPetId, "SavedPetId should not be null");
 
+        ExtentReportManager.getTest().info("Deleting pet with ID: " + savedPetId);
         Response deleteResponse = petService.deletePet(savedPetId);
+        ExtentReportManager.getTest().info("Delete pet API response code: " + deleteResponse.getStatusCode());
         assertEquals(deleteResponse.getStatusCode(), 200, "Failed to delete pet");
 
+        ExtentReportManager.getTest().info("Verifying pet deletion");
         Response getResponse = petService.getPetById(savedPetId);
+        ExtentReportManager.getTest().info("Get deleted pet API response code: " + getResponse.getStatusCode());
         assertEquals(getResponse.getStatusCode(), 404, "Pet should not exist after deletion");
     }
 
     @Test(priority = 5, description = "TC05 - Attempt to get non-existent pet")
     public void TC05_testGetNonExistentPet() {
-        System.out.println("Running TC05...");
+        ExtentReportManager.getTest().info("Starting test: Get non-existent pet");
         assertNotNull(petService, "PetService should not be null");
 
-        Response response = petService.getPetById(999999999L);
+        Long nonExistentId = 999999999L;
+        ExtentReportManager.getTest().info("Attempting to get pet with non-existent ID: " + nonExistentId);
+        Response response = petService.getPetById(nonExistentId);
+        ExtentReportManager.getTest().info("Get non-existent pet API response code: " + response.getStatusCode());
         assertEquals(response.getStatusCode(), 404, "Should return 404 for non-existent pet");
     }
 
     @Test(priority = 6, description = "TC06 - Create pet with invalid status")
     public void TC06_testCreatePetWithInvalidStatus() {
-        System.out.println("Running TC06...");
+        ExtentReportManager.getTest().info("Starting test: Create pet with invalid status");
         assertNotNull(petService, "PetService should not be null");
-    }
 
-    private Pet createTestPet(String name, String status) {
-        Pet.Category category = Pet.Category.builder()
-                .id(1L)
-                .name("Dogs")
-                .build();
+        ExtentReportManager.getTest().info("Loading invalid pet data from JSON");
+        Pet invalidPet = TestDataReader.getTestData("pet-data.json", "invalidPet", Pet.class);
 
-        Pet.Tag tag = Pet.Tag.builder()
-                .id(1L)
-                .name("friendly")
-                .build();
-
-        return Pet.builder()
-                .name(name)
-                .status(status)
-                .category(category)
-                .photoUrls(Collections.singletonList("http://example.com/photo.jpg"))
-                .tags(Collections.singletonList(tag))
-                .build();
+        ExtentReportManager.getTest().info("Attempting to create pet with invalid status: " + invalidPet.getStatus());
+        Response response = petService.createPet(invalidPet);
+        ExtentReportManager.getTest().info("Create invalid pet API response code: " + response.getStatusCode());
     }
 }
