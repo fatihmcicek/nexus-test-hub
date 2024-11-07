@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Pet Store API Test Suite">
+    <test name="Pet API Tests" preserve-order="true">
+        <classes>
+            <class name="com.nexustest.api.tests.PetTest">
+                <methods>
+                    <include name="TC01_testCreateAndGetPet"/>
+                    <include name="TC02_testUpdatePet"/>
+                    <include name="TC03_testFindPetsByStatus"/>
+                    <include name="TC04_testDeletePet"/>
+                    <include name="TC05_testGetNonExistentPet"/>
+                    <include name="TC06_testCreatePetWithInvalidStatus"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>
