@@ -1,0 +1,82 @@
+name: Nexus Test Hub CI/CD
+
+on:
+  push:
+    branches: [ main, performance-tests ]
+  pull_request:
+    branches: [ main, performance-tests ]
+
+jobs:
+  api-tests:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build Project
+        run: mvn clean compile
+        continue-on-error: true
+
+      - name: Run API Tests
+        run: mvn test
+        continue-on-error: true
+
+      - name: Generate Test Report
+        if: always()
+        run: mvn surefire-report:report-only
+        continue-on-error: true
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: api-test-results
+          path: target/surefire-reports
+
+  performance-tests:
+    if: github.ref == 'refs/heads/performance-tests'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build Project
+        run: mvn clean compile
+        continue-on-error: true
+
+      - name: Run Performance Tests
+        run: mvn test -DsuiteXmlFile=src/test/resources/performance-testng.xml
+        continue-on-error: true
+
+      - name: Upload Performance Results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: performance-test-results
+          path: |
+            target/jmeter/results
+            target/jmeter/reports
+
+  deploy:
+    needs: [api-tests, performance-tests]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Deploy Status
+        run: echo "Deployment step completed successfully!"

@@ -1,15 +1,17 @@
-# Nexus Test Hub - API & Performance Testing
+# Nexus Test Hub
+
+[![Nexus Test Hub CI/CD](https://github.com/fatihmcicek/nexus-test-hub/actions/workflows/maven.yml/badge.svg)](https://github.com/fatihmcicek/nexus-test-hub/actions/workflows/maven.yml)
 
 ## Overview
-This project contains both API and Performance tests for the Pet Store API. The framework is built using RestAssured and JMeter with TestNG integration.
+This project contains both API and Performance tests for the Pet Store API, utilizing RestAssured for API testing and JMeter for performance testing, both integrated with TestNG framework.
 
 ## Project Branches
-- `main`: Contains API Testing Framework
-- `performance-tests`: Contains Performance Testing Framework
+- `main`: API Testing Framework
+- `performance-tests`: Performance Testing Framework
 
-## API Testing Framework (main branch)
+## 📂 Project Structure
 
-### API Test Structure
+### API Testing Framework (main branch)
 ```
 src/
 ├── main/java/com/nexustest/
@@ -30,152 +32,153 @@ src/
         └── testng.xml      
 ```
 
-### API Test Scenarios
-#### Pet API Tests
-- TC01: Create and verify new pet
-- TC02: Update existing pet
-- TC03: Find pets by status
-- TC04: Delete pet
-- TC05: Verify non-existent pet
-- TC06: Invalid pet creation
-
-#### Store API Tests
-- TC01: Create new order
-- TC02: Get store inventory
-- TC03: Get invalid order
-- TC04: Delete order
-
-#### User API Tests
-- TC01: Create new user
-- TC02: Create multiple users
-- TC03: Update user
-- TC04: User login/logout
-- TC05: Delete user
-
-## Performance Testing Framework (performance-tests branch)
-
-To access the performance testing framework:
-```bash
-git checkout performance-tests
-```
-
-### Performance Test Structure
+### Performance Testing Framework (performance-tests branch)
 ```
 src/
 ├── main/java/com/nexustest/performance/
 │   ├── config/
-│   │   └── JMeterEngine.java       # JMeter configuration
+│   │   └── JMeterEngine.java
 │   ├── reports/
-│   │   └── JMeterReportGenerator.java  # Report generation
+│   │   └── JMeterReportGenerator.java
 │   └── utils/
-│       └── ExtentReportManager.java    # Test execution reporting
+│       └── ExtentReportManager.java
 └── test/
-    ├── java/com/nexustest/performance/scenarios/
-    │   ├── BasePerformanceTest.java
-    │   ├── TC01_PetStoreLoadTest.java
-    │   ├── TC02_PetStoreConcurrencyTest.java
-    │   ├── TC03_StoreStressTest.java
-    │   ├── TC04_PetStoreSpikeTest.java
-    │   └── TC05_UserStressTest.java
-    └── resources/
-        ├── jmeter.properties
-        └── performance-testng.xml
+    └── java/com/nexustest/performance/scenarios/
+        ├── TC01_PetStoreLoadTest.java
+        ├── TC02_PetStoreConcurrencyTest.java
+        ├── TC03_StoreStressTest.java
+        ├── TC04_PetStoreSpikeTest.java
+        └── TC05_UserStressTest.java
 ```
 
-### Performance Test Scenarios
-#### TC01: Basic Load Test
-- Normal conditions testing
-- 25 concurrent users
-- 5 second ramp-up
-- Tests GET /pet/findByStatus
+## 🔍 Test Scenarios
 
-#### TC02: Concurrency Test
-- Simultaneous operations testing
-- 50 concurrent users
-- 2 second ramp-up
-- Tests POST /pet
+### API Tests
+- **Pet API**
+    - Create, update, and delete pets
+    - Find pets by status
+    - Handle invalid cases
 
-#### TC03: Store Stress Test
-- Store inventory under load
-- 30 concurrent users
-- 5 second ramp-up
-- 2 iterations per user
+- **Store API**
+    - Place and manage orders
+    - Check inventory
 
-#### TC04: Spike Test
-- Sudden traffic spike testing
-- 200 concurrent users
-- 1 second ramp-up
-- Single iteration
+- **User API**
+    - User management operations
+    - Authentication tests
 
-#### TC05: User Stress Test
-- User operations under load
-- 100 concurrent users
-- 10 second ramp-up
-- 5 iterations per user
+### Performance Tests
+- **TC01: Load Test**
+    - 25 users
+    - 5s ramp-up
+    - Basic API behavior
 
-## Setup and Configuration
+- **TC02: Concurrency Test**
+    - 50 users
+    - 2s ramp-up
+    - Multiple operations
+
+- **TC03: Store Stress**
+    - 30 users
+    - 5s ramp-up
+    - 2 iterations
+
+- **TC04: Spike Test**
+    - 200 users
+    - 1s ramp-up
+    - Sudden load
+
+- **TC05: User Stress**
+    - 100 users
+    - 10s ramp-up
+    - 5 iterations
+
+## 🚀 Getting Started
 
 ### Prerequisites
 - Java 21
 - Maven
+- Git
 - IntelliJ IDEA (recommended)
 
 ### Installation
+
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/nexus-test-hub.git
+git clone https://github.com/fatihmcicek/nexus-test-hub.git
+cd nexus-test-hub
 ```
 
-2. For API Testing:
+2. Choose your testing type:
+
+For API Testing:
 ```bash
 git checkout main
 mvn clean install
 ```
 
-3. For Performance Testing:
+For Performance Testing:
 ```bash
 git checkout performance-tests
 mvn clean install
 ```
 
-## Running Tests
+## 🏃 Running Tests
 
-### API Tests (main branch)
+### API Tests
 ```bash
-# Run all API tests
+# All tests
 mvn clean test
 
-# Run specific test suite
+# Specific suite
 mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testng.xml
 ```
 
-### Performance Tests (performance-tests branch)
+### Performance Tests
 ```bash
-# Run all performance tests
+# All tests
 mvn clean test -DsuiteXmlFile=src/test/resources/performance-testng.xml
 
-# Run specific performance test
+# Single test
 mvn test -Dtest=TC01_PetStoreLoadTest
 ```
 
-## Test Reports
+## 📊 Test Reports
 
 ### API Test Reports
-- ExtentReports: `test-output/extent-reports/`
-- TestNG reports: `target/surefire-reports/`
+```
+test-output/extent-reports/    # Detailed HTML reports
+target/surefire-reports/       # TestNG reports
+```
 
 ### Performance Test Reports
-- JMeter results: `target/jmeter/results/`
-- Performance reports: `target/jmeter/reports/`
-- Execution reports: `target/performance-reports/`
+```
+target/jmeter/results/         # Raw data
+target/jmeter/reports/         # Performance metrics
+target/performance-reports/    # Execution details
+```
 
-## Dependencies
+## 🔄 CI/CD Pipeline
+
+Our CI/CD pipeline uses GitHub Actions with separate workflows for API and Performance tests:
+
+### Workflow Features
+- Automatic triggers on push and PR
+- Separate jobs for API and Performance tests
+- Test report generation
+- Artifact upload for results
+- Branch-specific workflows
+
+### Status Badges
+- Main Branch (API): ![API Tests](https://github.com/fatihmcicek/nexus-test-hub/actions/workflows/maven.yml/badge.svg?branch=main)
+- Performance Branch: ![Performance Tests](https://github.com/fatihmcicek/nexus-test-hub/actions/workflows/maven.yml/badge.svg?branch=performance-tests)
+
+## 🛠 Technologies
 
 ### API Testing
 - RestAssured
 - TestNG
 - Jackson
-- Lombok
 - ExtentReports
 - Log4j2
 
@@ -185,18 +188,22 @@ mvn test -Dtest=TC01_PetStoreLoadTest
 - ExtentReports
 - Log4j2
 
-## Contributing
-1. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-2. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-3. Push to the branch (`git push origin feature/AmazingFeature`)
-4. Create a Pull Request
+## 📝 Contributing
 
-## Notes
-- Switch branches based on testing needs (API vs Performance)
-- Ensure sufficient system resources for performance tests
-- Review logs and reports after test execution
-- Configure thread counts based on system capacity
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## Contact
-* Fatih Mehmet ÇİÇEK - [@linkedin](https://www.linkedin.com/in/fatihmcicek/)
-* Project Link: [https://github.com/fatihmcicek/nexus-test-hub](https://github.com/fatihmcicek/nexus-test-hub)
+## 📌 Notes
+- Switch branches based on testing needs
+- Ensure system resources for performance tests
+- Check logs and reports after execution
+- Adjust thread counts based on system capacity
+
+## 📧 Contact
+
+Fatih Mehmet ÇİÇEK - [LinkedIn](https://www.linkedin.com/in/fatihmcicek)
+
+Project Link: [https://github.com/fatihmcicek/nexus-test-hub](https://github.com/fatihmcicek/nexus-test-hub)
