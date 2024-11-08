@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Pet Store Performance Test Suite">
+    <test name="Load Tests">
+        <classes>
+            <class name="com.nexustest.performance.scenarios.TC01_PetStoreLoadTest"/>
+            <class name="com.nexustest.performance.scenarios.TC02_PetStoreConcurrencyTest"/>
+            <class name="com.nexustest.performance.scenarios.TC03_StoreStressTest"/>
+        </classes>
+    </test>
+    <test name="Stress Tests">
+        <classes>
+            <class name="com.nexustest.performance.scenarios.TC05_UserStressTest"/>
+        </classes>
+    </test>
+    <test name="Spike Tests">
+        <classes>
+            <class name="com.nexustest.performance.scenarios.TC04_PetStoreSpikeTest"/>
+        </classes>
+    </test>
+</suite>

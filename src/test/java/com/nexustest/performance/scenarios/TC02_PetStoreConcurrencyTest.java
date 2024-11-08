@@ -1,17 +1,15 @@
 package com.nexustest.performance.scenarios;
 
-import com.nexustest.performance.config.JMeterEngine;
 import org.apache.jmeter.protocol.http.control.HeaderManager;
 import org.apache.jmeter.protocol.http.sampler.HTTPSamplerProxy;
 import org.apache.jmeter.threads.ThreadGroup;
 import org.testng.annotations.Test;
-import java.util.HashMap;
-import java.util.Map;
+import com.nexustest.performance.config.JMeterEngine;
 
-public class TC01_PetStoreLoadTest implements TestScenario {
+public class TC02_PetStoreConcurrencyTest implements TestScenario {
     private JMeterEngine jmeterEngine;
     private static final String BASE_URL = "petstore.swagger.io";
-    private static final String TEST_NAME = "Pet Store Load Test";
+    private static final String TEST_NAME = "TC02_AddNewPets_ConcurrencyTest";
 
     @Override
     public void setup() {
@@ -21,24 +19,34 @@ public class TC01_PetStoreLoadTest implements TestScenario {
 
     @Override
     public void execute() {
-        System.out.println("Executing performance test...");
+        System.out.println("Executing TC02 - Concurrent Pet Addition Test");
 
+        int loops = 0;
         ThreadGroup threadGroup = jmeterEngine.createThreadGroup(
-                "Pet Store Users",
-                25,
-                5
-        );
+                "Concurrent Pet Creation",
+                50,   // Yüksek eşzamanlı kullanıcı
+                2,     // Hızlı ramp-up
+                loops);
 
-        Map<String, String> params = new HashMap<>();
-        params.put("status", "available");
+        String petData = """
+                {
+                    "id": 0,
+                    "category": {"id": 1, "name": "Dogs"},
+                    "name": "TestDog",
+                    "photoUrls": ["http://example.com/photo.jpg"],
+                    "tags": [{"id": 1, "name": "test"}],
+                    "status": "available"
+                }""";
 
         HTTPSamplerProxy httpSampler = jmeterEngine.createHttpSampler(
-                "Get Available Pets",
+                "Add New Pet",
                 BASE_URL,
-                "/v2/pet/findByStatus",
-                "GET",
-                params
+                "/v2/pet",
+                "POST",
+                null
         );
+        httpSampler.setPostBodyRaw(true);
+        httpSampler.addNonEncodedArgument("", petData, "");
 
         HeaderManager headerManager = jmeterEngine.createHeaderManager();
         jmeterEngine.setupTestPlan(TEST_NAME, threadGroup, httpSampler, headerManager);
@@ -48,13 +56,12 @@ public class TC01_PetStoreLoadTest implements TestScenario {
     public void generateReport() {
         System.out.println("\n=== Test Execution Summary ===");
         System.out.println("Test Name: " + TEST_NAME);
-        System.out.println("Report Location: target/jmeter/results/");
-        System.out.println("To view the report, open index.html in your browser from the report directory");
+        System.out.println("Report Location: target/jmeter/reports/");
         System.out.println("=============================\n");
     }
 
-    @Test(description = "Execute Pet Store Load Test")
-    public void runLoadTest() throws InterruptedException {
+    @Test(description = "TC02 - Concurrent Pet Addition Test")
+    public void runConcurrencyTest() throws InterruptedException {
         try {
             setup();
             execute();

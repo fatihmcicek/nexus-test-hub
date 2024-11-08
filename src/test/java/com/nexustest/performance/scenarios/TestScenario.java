@@ -1,4 +1,7 @@
 package com.nexustest.performance.scenarios;
 
-public class TestScenario {
+public interface TestScenario {
+    void setup();
+    void execute();
+    void generateReport();
 }
