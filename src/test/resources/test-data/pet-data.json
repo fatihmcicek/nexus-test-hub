@@ -1,0 +1,25 @@
+{
+  "validPet": {
+    "name": "Buddy",
+    "category": {
+      "id": 1,
+      "name": "Dogs"
+    },
+    "photoUrls": ["http://example.com/photo.jpg"],
+    "tags": [
+      {
+        "id": 1,
+        "name": "friendly"
+      }
+    ],
+    "status": "available"
+  },
+  "updatePet": {
+    "name": "Buddy Updated",
+    "status": "sold"
+  },
+  "invalidPet": {
+    "name": "Invalid Pet",
+    "status": "invalid_status"
+  }
+}
